@@ -1,0 +1,58 @@
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+// Get current date and time as a string
+string getTime() {
+    time_t now = time(0); // current time
+    char buf[80];
+    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&now)); // format time
+    return buf;
+}
+
+// Generate a fake ping value (1 to 100 ms)
+int getPing() {
+    return rand() % 100 + 1;
+}
+
+// Generate a fake download speed (10 to 110 Mbps)
+float getDownloadSpeed() {
+    return rand() % 101 + 10;
+}
+
+// Generate a fake upload speed (5 to 55 Mbps)
+float getUploadSpeed() {
+    return rand() % 51 + 5;
+}
+
+int main() {
+    // Check if CSV file is empty to write the header
+    ifstream check("network_data.csv");
+    bool isEmpty = check.peek() == ifstream::traits_type::eof();
+    check.close();
+
+    // Open the CSV file in append mode
+    ofstream file("network_data.csv", ios::app);
+
+    // Write column names only if the file is empty
+    if (isEmpty) {
+        file << "Time,Ping(ms),Download Speed(Mbps),Upload Speed(Mbps)\n";
+    }
+
+    // Generate and write 5 data entries
+    for (int i = 0; i < 5; ++i) {
+        string time = getTime();
+        int ping = getPing();
+        float download = getDownloadSpeed();
+        float upload = getUploadSpeed();
+
+        file << time << "," << ping << "," << download << "," << upload << "\n";
+        cout << "✅ Data written for: " << time << endl;
+    }
+
+    // Close the file
+    file.close(); 
+    return 0;
+}
